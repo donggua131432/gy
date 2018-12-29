@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: eureka
+
+server:
+  port: ${server_port}
+
+eureka:
+  client:
+    register-with-eureka: false   # 不向注册中心注册自己
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: ${registry_url}
+
+logging:
+  config: classpath:config/logback.xml
+  dir: /home/www/webapp/logs/eureka
+
+
+
