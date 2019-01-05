@@ -1,18 +1,29 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import axios from 'axios';
 import ElementUI from 'element-ui';
+import NProgress from 'nprogress';
+import util from './components/common/util';
+import api from './components/common/api';
+
+import "nprogress/nprogress.css";
 import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
 import '../static/css/icon.css';
 import "babel-polyfill";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+//设置全局变量域名接口
+global.apiUrl = process.env.API_ROOT;
+global.ossDomain = `https://${process.env.bucket}.${process.env.endpoint}`
 
 Vue.use(ElementUI, { size: 'small' });
-Vue.prototype.$axios = axios;
+Vue.prototype.$util = util;
+Vue.prototype.$api = api;
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
+    NProgress.start();
     const role = localStorage.getItem('ms_username');
     if(!role && to.path !== '/login'){
         next('/login');
@@ -29,7 +40,11 @@ router.beforeEach((to, from, next) => {
             next();
         }
     }
-})
+});
+
+router.afterEach(() => {
+    NProgress.done()
+});
 
 new Vue({
     router,

@@ -1,0 +1,48 @@
+[
+    {
+        "dictName": "性别",
+        "dictCode": "sex",
+        "dictItems": [
+            {
+                "itemName": "男",
+                "itemValue": "0"
+            },
+            {
+                "itemName": "女",
+                "itemValue": "1"
+            }
+        ]
+    },
+    {
+        "dictName": "状态",
+        "dictCode": "status",
+        "dictItems": [
+            {
+                "itemName": "正常",
+                "itemValue": "0"
+            },
+            {
+                "itemName": "禁用",
+                "itemValue": "1"
+            }
+        ]
+    },
+    {
+        "dictName": "资源类型",
+        "dictCode": "menu_type",
+        "dictItems": [
+            {
+                "itemName": "菜单",
+                "itemValue": "1"
+            },
+            {
+                "itemName": "资源",
+                "itemValue": "2"
+            },
+            {
+                "itemName": "资源分类",
+                "itemValue": "3"
+            }
+        ]
+    }
+]

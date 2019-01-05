@@ -2,31 +2,32 @@
     <div class="login-wrap">
         <div class="ms-login">
             <div class="ms-title">后台管理系统</div>
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="ms-content">
+            <el-form :model="userForm" :rules="rules" ref="userForm" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="ruleForm.username" placeholder="username">
+                    <el-input v-model="userForm.username" placeholder="username">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input type="password" placeholder="password" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')">
+                    <el-input type="password" placeholder="password" v-model="userForm.password" @keyup.enter.native="submitForm('userForm')">
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
                     </el-input>
                 </el-form-item>
                 <div class="login-btn">
-                    <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+                    <el-button type="primary" @click="submitForm('userForm')">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
+                <p class="login-tips">Tips : 请输入正确的用户名和密码。</p>
             </el-form>
         </div>
     </div>
 </template>
 
 <script>
+    import api from '@/components/common/api'
     export default {
         data: function(){
             return {
-                ruleForm: {
+                userForm: {
                     username: 'admin',
                     password: '123123'
                 },
@@ -44,10 +45,37 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
-                        this.$router.push('/');
+                        //1：获取动态秘钥
+                        api.getDynamicSecretKey().then((res) => {
+                            var tokenKey = res.data.data.tokenKey, userKey = res.data.data.userKey;
+                            //2:发起登陆获取jwtToken
+                            if (res.data.code == '00') {
+                                //AES前端加密
+                                var userFormAES = this.$util.encrypt(this.userForm.password,tokenKey);
+                                api.login({
+                                    appId:this.userForm.username,
+                                    timestamp:Date.parse(new Date()),
+                                    password:userFormAES,
+                                    userKey:userKey
+                                }).then((res) => {
+                                    if (res.data.code == '00') {
+                                        //3:将jwtToken缓存到本地客户端
+                                        const user = res.data.data;
+                                        localStorage.setItem('Authorization',user.token);
+                                        localStorage.setItem('AppId',user.userId);
+                                        localStorage.setItem('ms_username',user.userName);
+                                        localStorage.setItem('user',user);
+                                        this.$router.push('/');
+                                    }else {
+                                        this.$message.error(res.data.msg);
+                                    }
+                                });
+                            }else{
+                                this.$message.error(res.data.msg);
+                            }
+                        });
                     } else {
-                        console.log('error submit!!');
+                        this.$message.error('验证失败');
                         return false;
                     }
                 });

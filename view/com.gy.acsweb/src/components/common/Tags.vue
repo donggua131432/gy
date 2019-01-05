@@ -5,7 +5,9 @@
                 <router-link :to="item.path" class="tags-li-title">
                     {{item.title}}
                 </router-link>
-                <span class="tags-li-icon" @click="closeTags(index)"><i class="el-icon-close"></i></span>
+                <span v-if="item.path != '/dashboard'" class="tags-li-icon" @click="closeTags(index)">
+                    <i class="el-icon-close"></i>
+                </span>
             </li>
         </ul>
         <div class="tags-close-box">
@@ -14,6 +16,7 @@
                     标签选项<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu size="small" slot="dropdown">
+                    <el-button type="success" @click="modifyInfo(scope.$index)">修改信息</el-button>
                     <el-dropdown-item command="other">关闭其他</el-dropdown-item>
                     <el-dropdown-item command="all">关闭所有</el-dropdown-item>
                 </el-dropdown-menu>
@@ -27,7 +30,7 @@
     export default {
         data() {
             return {
-                tagsList: []
+                tagsList: [],
             }
         },
         methods: {
@@ -103,6 +106,7 @@
         background: #fff;
         padding-right: 120px;
         box-shadow: 0 5px 10px #ddd;
+        z-index: 1000;
     }
 
     .tags ul {

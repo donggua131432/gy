@@ -21,7 +21,6 @@ export default {
 }
 </script>
 
-
 <style scoped>
     .error-page{
         display: flex;
