@@ -1,4 +1,4 @@
-tignore for maven 
+tignore for maven
 target/
 *.releaseBackup
 
@@ -44,7 +44,7 @@ target/
 # "temporary" build files
 target/
 out/
-build/
+#build/
 
 # other
 *.iws
@@ -95,6 +95,9 @@ tmp/**/*
 ## .gitignore for linux
 .*
 !.gitignore
+!.postcssrc.js
+!.editorconfig
+!.babelrc
 *~
 
 ## .gitignore for windows
