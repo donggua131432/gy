@@ -127,3 +127,6 @@ Icon
 ## hack for graddle wrapper
 !wrapper/*.jar
 !**/wrapper/*.jar
+
+dist/
+node_modules/
