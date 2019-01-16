@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.sys.FileInfoRelMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.FileInfoRel">
+    <id column="rel_id" jdbcType="CHAR" property="relId" />
+    <result column="file_id" jdbcType="CHAR" property="fileId" />
+    <result column="file_type" jdbcType="CHAR" property="fileType" />
+    <result column="file_order" jdbcType="INTEGER" property="fileOrder" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    rel_id, file_id, file_type, file_order
+  </sql>
+
+  <select id="selectFileInfoRel" parameterType="com.gy.domain.dto.sys.FileInfoRel" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_file_info_rel
+    where rel_id = #{relId,jdbcType=CHAR}
+      and file_id = #{fileId,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteFileInfoRelById" parameterType="java.lang.String">
+    delete from sys_file_info_rel
+    where file_id = #{fileId,jdbcType=CHAR}
+  </delete>
+
+  <delete id="deleteFileInfoRelByIdBatch" parameterType="java.util.List">
+    delete from sys_file_info_rel where file_id in
+    <foreach collection="fileInfoRelIdList" item="firl" index="index" separator="," open="(" close=")">
+      #{firl}
+    </foreach>
+  </delete>
+
+  <insert id="insertFileInfoRel" parameterType="com.gy.domain.dto.sys.FileInfoRel">
+    insert into sys_file_info_rel
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="relId != null ">
+        rel_id,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="fileType != null">
+        file_type,
+      </if>
+      <if test="fileOrder != null">
+        file_order,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="relId != null ">
+        #{relId,jdbcType=CHAR},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=CHAR},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=CHAR},
+      </if>
+      <if test="fileOrder != null">
+        #{fileOrder,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="insertFileInfoRelBatch" parameterType="java.util.List">
+    insert into sys_file_info_rel (rel_id, file_id, file_type, file_order) values
+    <foreach collection="fileInfoRelList" item="frl" index="index" separator="," >
+      (#{frl.relId,jdbcType=CHAR},#{frl.fileId,jdbcType=CHAR},#{frl.fileType,jdbcType=CHAR},#{frl.fileOrder,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <update id="updateFileInfoRelBatchById" parameterType="java.util.List">
+    update sys_file_info_rel set
+    file_id = case rel_id
+      <foreach collection="fileInfoRelList" item="f" index="index">
+        when #{f.relId} then #{f.fileId}
+      </foreach>
+    end,
+    file_type = case rel_id
+      <foreach collection="fileInfoRelList" item="f" index="index">
+        when #{f.relId} then #{f.fileType}
+      </foreach>
+    end,
+    file_order = case rel_id
+      <foreach collection="fileInfoRelList" item="f" index="index">
+        when #{f.relId} then #{f.fileOrder}
+      </foreach>
+    end
+    where file_id in
+    <foreach collection="fileInfoRelList" item="f" index="index" separator="," open="(" close=")">
+      #{f.relId}
+    </foreach>
+  </update>
+
+  <update id="updateFileInfoRelById" parameterType="com.gy.domain.dto.sys.FileInfoRel">
+    update sys_file_info_rel
+    <set>
+      <if test="fileId != null ">
+        file_id = #{fileId,jdbcType=CHAR}
+      </if>
+      <if test="fileType != null ">
+        file_type = #{fileType,jdbcType=CHAR}
+      </if>
+      <if test="fileOrder != null ">
+        file_order = #{fileOrder,jdbcType = INTEGER}
+      </if>
+    </set>
+    where rel_id = #{relId,jdbcType=CHAR}
+  </update>
+
+</mapper>

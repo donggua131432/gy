@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.sys.DictMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.Dict">
+    <id column="dict_id" jdbcType="VARCHAR" property="dictId" />
+    <result column="dict_code" jdbcType="VARCHAR" property="dictCode" />
+    <result column="dict_name" jdbcType="VARCHAR" property="dictName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    dict_id, dict_code, dict_name, create_time
+  </sql>
+
+  <select id="selectListDictPage" parameterType="com.gy.domain.vo.req.DictQuery" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from sys_dict
+    where 1=1
+    <if test="dictCode != null and dictCode != ''">
+      and dict_code = #{dictCode, jdbcTypeName=varchar}
+    </if>
+    <if test="dictName != null and dictName != ''">
+      and dict_name like CONCAT('%',#{dictName, jdbcTypeName=varchar},'%')
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_dict
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </select>
+
+  <resultMap id="DictInfoMap" type="com.gy.domain.dto.sys.DictInfo">
+    <result column="dict_code" jdbcType="VARCHAR" property="dictCode" />
+    <result column="dict_name" jdbcType="VARCHAR" property="dictName" />
+    <collection property="itemList" ofType="map" select="com.gy.mapper.sys.DictItemMapper.selectDictItemsByDictId" column="dict_id" />
+  </resultMap>
+  <select id="selectListDictInfo" resultMap="DictInfoMap">
+    select dict_id, dict_code, dict_name from sys_dict order by create_time desc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_dict
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.gy.domain.dto.sys.Dict">
+    insert into sys_dict
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        dict_id,
+      <if test="dictCode != null">
+        dict_code,
+      </if>
+      <if test="dictName != null">
+        dict_name,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="dictCode != null">
+        #{dictCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dictName != null">
+        #{dictName,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <!--数据字典不允许修改-->
+</mapper>

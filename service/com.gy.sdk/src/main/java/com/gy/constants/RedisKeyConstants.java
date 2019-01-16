@@ -13,8 +13,15 @@ public interface RedisKeyConstants {
 	int REDIS_DB_INDEX_2 = 2; //redis db 索引
 	int REDIS_DB_INDEX_3 = 3; //redis db 索引
 
+
+	/** 鉴权token有效期 */
+	int TOKEN_TTL = 30;
+	/** 签发的jwt有效期 */
+	int JWT_TTL = 36000;
+
 	/** 手机验证码缓存时间 */
 	int SMSCODE_TTL = 45; //45秒
+
 	/** 手机验证码缓存文件夹 */
 	String SMSCODE_CACHE = "phone_code";
 	String SMSCODE_CACHE_BIZ = "phone_code_biz";

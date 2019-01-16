@@ -4,12 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-
-/**
- * 
- * @author Administrator
- *
- */
 @ConfigurationProperties(prefix="redis.pool")
 public class GyRedisBean {
 

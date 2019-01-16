@@ -16,7 +16,7 @@ public class JdbcConfig
 	
 	private Global global;
 	
-	private List<SubJdbcConfig>jdbcConfigInfos;
+	private List<SubJdbcConfig> jdbcConfigInfos;
 	
 	private SubJdbcConfig defaultJdbcConfig ;
 	

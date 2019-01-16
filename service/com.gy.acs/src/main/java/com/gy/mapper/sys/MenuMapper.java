@@ -1,17 +1,24 @@
 package com.gy.mapper.sys;
 
-import com.gy.model.sys.Menu;
+import com.gy.domain.dto.sys.Menu;
+import com.gy.domain.vo.req.MenuQuery;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface MenuMapper {
-    int deleteByPrimaryKey(Integer menuId);
 
-    int insert(Menu record);
+    int deleteMenuById(String menuId);
 
-    int insertSelective(Menu record);
+    int insertMenu(Menu menu);
 
-    Menu selectByPrimaryKey(Integer menuId);
+    Menu selectMenuById(String menuId);
 
-    int updateByPrimaryKeySelective(Menu record);
+    List<Menu> selectListAllMenu();
 
-    int updateByPrimaryKey(Menu record);
+    List<Menu> selectListMenuPage(MenuQuery  menuQuery);
+
+    int updateMenu(Menu menu);
+
+    List<String> selectListMenuParentId(String menuId);
 }

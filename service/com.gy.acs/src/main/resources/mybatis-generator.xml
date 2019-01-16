@@ -24,7 +24,7 @@
         </javaTypeResolver>
 
         <!-- 实体类生成的位置 -->
-        <javaModelGenerator targetPackage="com.gy.model.sys" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.gy.domain.dto.sys" targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
@@ -40,7 +40,7 @@
         </javaClientGenerator>
 
         <!-- 相关表的配置 -->
-        <table  schema="ac" tableName="sys_role" domainObjectName="Role" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false"/>
-        <table  schema="ac" tableName="sys_menu" domainObjectName="Menu" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table  schema="ac" tableName="sp_video_sub" domainObjectName="VideoSub" enableCountByExample="false"
+                enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false"/>
     </context>
 </generatorConfiguration>

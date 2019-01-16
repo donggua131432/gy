@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.WholeMakeupMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.vo.res.WholeMakeupVo">
+    <id column="whole_makeup_id" jdbcType="CHAR" property="wholeMakeupId" />
+    <result column="whole_makeup_name" jdbcType="VARCHAR" property="wholeMakeupName" />
+    <result column="inle_name" jdbcType="VARCHAR" property="inleName" />
+    <result column="brand_id" jdbcType="CHAR" property="brandId" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName"/>
+    <result column="kol_id" jdbcType="CHAR" property="kolId" />
+    <result column="kol_name" jdbcType="VARCHAR" property="kolName"/>
+    <result column="cover_background" jdbcType="VARCHAR" property="coverBackground" />
+    <result column="cover_title" jdbcType="VARCHAR" property="coverTitle" />
+    <result column="cover_title_colour" jdbcType="VARCHAR" property="coverTitleColour" />
+    <result column="whole_makeup_status" jdbcType="VARCHAR" property="wholeMakeupStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    whole_makeup_id, whole_makeup_name, inle_name, brand_id, kol_id, cover_background, 
+    cover_title, cover_title_colour, whole_makeup_status, create_time
+  </sql>
+
+  <select id="selectWholeMakeupPage" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select swm.whole_makeup_id, swm.whole_makeup_name, swm.inle_name, sb.brand_id, sb.brand_name,sk.kol_id,sk.kol_name, swm.cover_background,
+    swm.cover_title, swm.cover_title_colour, swm.whole_makeup_status, swm.create_time
+    from sp_whole_makeup swm
+    left join sp_brand sb on sb.brand_id = swm.brand_id
+    left join sp_kol sk on sk.kol_id = swm.kol_id
+    where 1=1
+    <if test="wholeMakeupName != null and wholeMakeupName !=''">
+      and whole_makeup_name = #{wholeMakeupName,jdbcTypeName=VARCHAR}
+    </if>
+  </select>
+
+  <insert id="insertWholeMakeup" parameterType="com.gy.domain.dto.sys.WholeMakeup">
+    insert into sp_whole_makeup
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="wholeMakeupId != null">
+        whole_makeup_id,
+      </if>
+      <if test="wholeMakeupName != null">
+        whole_makeup_name,
+      </if>
+      <if test="inleName != null">
+        inle_name,
+      </if>
+      <if test="brandId != null">
+        brand_id,
+      </if>
+      <if test="kolId != null">
+        kol_id,
+      </if>
+      <if test="coverBackground != null">
+        cover_background,
+      </if>
+      <if test="coverTitle != null">
+        cover_title,
+      </if>
+      <if test="coverTitleColour != null">
+        cover_title_colour,
+      </if>
+      <if test="wholeMakeupStatus != null ">
+        whole_makeup_status,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="wholeMakeupId != null">
+        #{wholeMakeupId,jdbcType=CHAR},
+      </if>
+      <if test="wholeMakeupName != null">
+        #{wholeMakeupName,jdbcType=VARCHAR},
+      </if>
+      <if test="inleName != null">
+        #{inleName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null">
+        #{brandId,jdbcType=CHAR},
+      </if>
+      <if test="kolId != null">
+        #{kolId,jdbcType=CHAR},
+      </if>
+      <if test="coverBackground != null">
+        #{coverBackground,jdbcType=VARCHAR},
+      </if>
+      <if test="coverTitle != null">
+        #{coverTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="coverTitleColour != null">
+        #{coverTitleColour,jdbcType=VARCHAR},
+      </if>
+      <if test="wholeMakeupStatus != null ">
+        #{wholeMakeupStatus,jdbcType=CHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateWholeMakeupById" parameterType="com.gy.domain.dto.sys.WholeMakeup">
+    update sp_whole_makeup
+    <set>
+      <if test="wholeMakeupName != null">
+        whole_makeup_name = #{wholeMakeupName,jdbcType=VARCHAR},
+      </if>
+      <if test="inleName != null">
+        inle_name = #{inleName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null">
+        brand_id = #{brandId,jdbcType=CHAR},
+      </if>
+      <if test="kolId != null">
+        kol_id = #{kolId,jdbcType=CHAR},
+      </if>
+      <if test="coverBackground != null">
+        cover_background = #{coverBackground,jdbcType=VARCHAR},
+      </if>
+      <if test="coverTitle != null">
+        cover_title = #{coverTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="coverTitleColour != null">
+        cover_title_colour = #{coverTitleColour,jdbcType=VARCHAR},
+      </if>
+      <if test="wholeMakeupStatus != null ">
+        whole_makeup_status = #{wholeMakeupStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where whole_makeup_id = #{wholeMakeupId,jdbcType=CHAR}
+  </update>
+
+  <delete id="deleteWholeMakeupById" parameterType="java.lang.String">
+    delete from sp_whole_makeup
+    where whole_makeup_id = #{wholeMakeupId,jdbcType=CHAR}
+  </delete>
+</mapper>

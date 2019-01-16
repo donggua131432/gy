@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.sys.BrandMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.Brand">
+    <id column="brand_id" jdbcType="CHAR" property="brandId" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath"/>
+    <result column="file_id" jdbcType="CHAR" property="fileId"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    brand_id, brand_name, create_time
+  </sql>
+
+  <select id="selectBrandPage" resultMap="BaseResultMap" parameterType="com.gy.domain.vo.req.BrandQuery">
+    select sb.brand_id, sb.brand_name, sb.create_time,sfi.file_path,sfi.file_id
+    from sp_brand sb
+    left join sys_file_info_rel sfir on sb.brand_id = sfir.rel_id
+    left join sys_file_info sfi on sfir.file_id = sfi.file_id
+    where 1=1
+    <if test="brandName != null and brandName !=''">
+      and brand_name = #{brandName,jdbcTypeName=VARCHAR}
+    </if>
+  </select>
+
+  <delete id="deleteBrandById" parameterType="java.lang.String">
+    delete from sp_brand
+    where brand_id = #{brandId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertBrand" parameterType="java.lang.String">
+    insert into sp_brand (brand_id, brand_name, create_time)
+    values(#{brandId,jdbcType=CHAR}, #{brandName,jdbcType=VARCHAR}, now())
+  </insert>
+
+  <update id="updateBrandById" parameterType="com.gy.domain.dto.sys.Brand">
+    update sp_brand
+    <set>
+      <if test="brandName != null">
+        brand_name = #{brandName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where brand_id = #{brandId,jdbcType=CHAR}
+  </update>
+
+</mapper>

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Function:
- * @author crossoverJie
- * Date: 2017/6/7 下午11:43
- * @since JDK 1.8
+ * @描述: 错误码
+ * @作者: DuKai
+ * @创建时间: 2018/8/1 13:41
+ * @版本号: V1.0
  */
 public enum StatusEnum {
     /** 成功 */

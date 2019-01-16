@@ -1,7 +1,7 @@
 package com.gy.fallback;
 
 import com.gy.feign.UserFeignHystrixClient;
-import com.gy.model.sys.User;
+import com.gy.domain.dto.sys.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.OrganDefineArrayMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.vo.res.OrganDefineArrayVo">
+    <id column="soda_id" jdbcType="CHAR" property="sodaId" />
+    <result column="feature_type_id" jdbcType="CHAR" property="featureTypeId"/>
+    <result column="feature_type_name" jdbcType="VARCHAR" property="featureTypeName"/>
+    <result column="feature_id" jdbcType="CHAR" property="featureId"/>
+    <result column="feature_name" jdbcType="VARCHAR" property="featureName"/>
+  </resultMap>
+  <select id="selectOrganDefineArrayVo" parameterType="string" resultMap="BaseResultMap">
+    select soda.soda_id,soda.feature_type_id, sft.feature_type_name, soda.feature_id, sof.feature_name
+    from sp_organ_define_array soda
+    left join sp_feature_type sft on sft.feature_type_id = soda.feature_type_id
+    left join sp_organ_feature sof on sof.feature_id = soda.feature_id
+    where organ_define_id = #{organDefineId,jdbcType=CHAR}
+  </select>
+
+  <select id="selectOrganDefineArrayById" resultType="string">
+    select CONCAT(feature_type_id,',',feature_id) as organ_define_val
+    from sp_organ_define_array
+    where organ_define_id = #{organDefineId,jdbcType=CHAR}
+  </select>
+
+  <insert id="insertOrganDefineArrayBatch" parameterType="java.util.List">
+    insert into sp_organ_define_array (soda_id, organ_define_id, feature_type_id, feature_id) values
+    <foreach collection="organDefineArrayList" item="oda" index="index" separator=",">
+      (seq(), #{oda.organDefineId,jdbcType=CHAR}, #{oda.featureTypeId,jdbcType=CHAR}, #{oda.featureId,jdbcType=CHAR})
+    </foreach>
+  </insert>
+
+  <delete id="deleteOrganDefineArrayBatch" parameterType="java.util.List">
+    delete from sp_organ_define_array where (feature_type_id,feature_id) in
+    <foreach collection="arrStrList" item="str" index="index" separator="," open="(" close=")">
+      (SUBSTRING_INDEX(#{str}, ',', 1), SUBSTRING_INDEX(#{str}, ',', -1))
+    </foreach>
+  </delete>
+
+  <delete id="deleteOrganDefineArray">
+    delete from sp_organ_define_array where organ_define_id = #{organDefineId,jdbcType=CHAR}
+  </delete>
+
+</mapper>

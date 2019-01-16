@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.FaceMatchMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.vo.res.FaceMatchVo">
+    <id column="face_match_id" jdbcType="CHAR" property="faceMatchId" />
+    <result column="organ_id" jdbcType="CHAR" property="organId"/>
+    <result column="organ_name" jdbcType="VARCHAR" property="organName"/>
+    <result column="feature_type_id" jdbcType="CHAR" property="featureTypeId"/>
+    <result column="feature_type_name" jdbcType="VARCHAR" property="featureTypeName"/>
+    <result column="feature_id" jdbcType="CHAR" property="featureId"/>
+    <result column="feature_name" jdbcType="VARCHAR" property="featureName"/>
+    <result column="whole_makeup_id" jdbcType="CHAR" property="wholeMakeupId"/>
+    <result column="match_score" jdbcType="INTEGER" property="matchScore"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    face_match_id, feature_id, match_score
+  </sql>
+
+  <select id="selectFaceMatch" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select sfm.face_match_id, sfm.feature_id, sfm.match_score,
+    sof.feature_id,sof.feature_name,sft.feature_type_id,sft.feature_type_name,so.organ_id,so.organ_name
+    from sp_face_match sfm
+    left join sp_organ_feature sof on sof.feature_id = sfm.feature_id
+    left join sp_feature_type sft on sft.feature_type_id = sof.feature_type_id
+    left join sp_organ so on so.organ_id = sft.organ_id
+  </select>
+
+  <delete id="deleteFaceMatchBatch" parameterType="java.lang.String">
+    delete from sp_face_match where face_match_id = #{faceMatchId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertFaceMatch" parameterType="com.gy.domain.dto.makeup.FaceMatch">
+    insert into sp_face_match
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        face_match_id,
+      <if test="wholeMakeupId != null">
+        whole_makeup_id,
+      </if>
+      <if test="featureId != null">
+        feature_id,
+      </if>
+      <if test="matchScore != null">
+        match_score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="wholeMakeupId != null">
+        #{wholeMakeupId,jdbcType=CHAR},
+      </if>
+      <if test="featureId != null">
+        #{featureId,jdbcType=CHAR},
+      </if>
+      <if test="matchScore != null">
+        #{matchScore,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateFaceMatchById" parameterType="com.gy.domain.dto.makeup.FaceMatch">
+    update sp_face_match
+    <set>
+      <if test="wholeMakeupId != null ">
+        whole_makeup_id = #{wholeMakeupId,jdbcType=CHAR},
+      </if>
+      <if test="featureId != null">
+        feature_id = #{featureId,jdbcType=CHAR},
+      </if>
+      <if test="matchScore != null">
+        match_score = #{matchScore,jdbcType=INTEGER},
+      </if>
+    </set>
+    where face_match_id = #{faceMatchId,jdbcType=CHAR}
+  </update>
+
+</mapper>

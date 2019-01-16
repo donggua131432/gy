@@ -63,6 +63,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+
         <!-- 分页插件 -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
@@ -99,11 +100,13 @@
                     <!--配置文件的位置-->
                     <configurationFile>src/main/resources/mybatis-generator.xml</configurationFile>
                     <verbose>true</verbose>
-                    <overwrite>true</overwrite>
+                    <overwrite>false</overwrite>
                 </configuration>
                 <executions>
                     <execution>
                         <id>Generate MyBatis Artifacts</id>
+                        <!--该配置可避免maven install或者package时候运行该插件，导致本地mapper重新生成 -->
+                        <phase>deploy</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>

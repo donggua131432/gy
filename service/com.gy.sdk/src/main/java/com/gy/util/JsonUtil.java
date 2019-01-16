@@ -33,7 +33,7 @@ public class JsonUtil {
 	 * @param o
 	 * @return
 	 */
-	public static String object2String(Object o) {
+	public static String objectToString(Object o) {
 		if(o == null)
 			return null;
 		if(ClassUtil.isBaseDataType(o.getClass()))
@@ -49,8 +49,8 @@ public class JsonUtil {
 	 * @param clz
 	 * @return
 	 */
-	public static <T> T map2Object(Map s, Class<T> clz) {
-		return JSON.parseObject(object2String(s), clz);
+	public static <T> T mapToObject(Map s, Class<T> clz) {
+		return JSON.parseObject(objectToString(s), clz);
 	}
 	
 	
@@ -59,7 +59,7 @@ public class JsonUtil {
 	 * @param s
 	 * @return
 	 */
-	public static Object str2Object(String s) {
+	public static Object strToObject(String s) {
 		if(!StringUtil.hasValue(s))
 			return null;
 		
@@ -80,7 +80,7 @@ public class JsonUtil {
 	 * @param clz
 	 * @return
 	 */
-	public static <T> T str2Object(String jsonStr, Class<T> clz) {
+	public static <T> T strToObject(String jsonStr, Class<T> clz) {
 		if (StringUtil.isBlank(jsonStr)) {
 			logger.error("json is null,param error!");
 			return null;
@@ -97,7 +97,7 @@ public class JsonUtil {
 	 * @param clz
 	 * @return
 	 */
-	public static <T> List<T> str2List(String jsonStr, Class<T> clz) {
+	public static <T> List<T> strToList(String jsonStr, Class<T> clz) {
 		if (StringUtil.isBlank(jsonStr)) {
 			logger.error("json is null,param error!");
 			return null;
@@ -107,7 +107,7 @@ public class JsonUtil {
 	
 	
 	// Bean --> Map 1: 利用Introspector和PropertyDescriptor 将Bean --> Map
-	public static Map<String, Object> object2Map(Object obj) {
+	public static Map<String, Object> objectToMap(Object obj) {
 		if (obj == null) {
 			return null;
 		}

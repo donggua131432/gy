@@ -1,42 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gy.mapper.sys.MenuMapper">
-  <resultMap id="BaseResultMap" type="com.gy.model.sys.Menu">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.Menu">
     <id column="menu_id" jdbcType="INTEGER" property="menuId" />
+    <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
     <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
     <result column="parent_id" jdbcType="INTEGER" property="parentId" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="type" jdbcType="CHAR" property="type" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
     <result column="menu_ico" jdbcType="VARCHAR" property="menuIco" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    menu_id, menu_name, parent_id, url, type, menu_ico, sort, create_time,update_time
+    menu_id, menu_code, menu_name, parent_id, url, type,method, menu_ico, status, sort, create_time,update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+  <select id="selectMenuById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from sys_menu
     where menu_id = #{menuId,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+
+  <select id="selectListAllMenu" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from sys_menu where type = '1' order by sort
+  </select>
+
+  <select id="selectListMenuPage" resultMap="BaseResultMap" parameterType="com.gy.domain.vo.req.MenuQuery">
+    select <include refid="Base_Column_List" /> from sys_menu
+    where 1=1
+    <if test="menuName != null and menuName != ''">
+      and menu_name like CONCAT('%',#{menuName, jdbcTypeName=varchar},'%')
+    </if>
+    <if test="menuCode != null and menuCode != ''">
+      and menu_code = #{menuCode,jdbcTypeName=VARCHAR}
+    </if>
+  </select>
+
+  <delete id="deleteMenuById" parameterType="java.lang.String">
     delete from sys_menu
-    where menu_id = #{menuId,jdbcType=INTEGER}
+    where menu_id = #{menuId,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.gy.model.sys.Menu">
-    insert into sys_menu (menu_id, menu_name, parent_id, 
-      url, type, menu_ico, sort, 
-      create_time,update_time)
-    values (#{menuId,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
-      #{url,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{menuIco,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" parameterType="com.gy.model.sys.Menu">
+
+  <insert id="insertMenu" parameterType="com.gy.domain.dto.sys.Menu">
     insert into sys_menu
     <trim prefix="(" suffix=")" suffixOverrides=",">
         menu_id,
+      <if test="menuCode != null">
+        menu_code,
+      </if>
       <if test="menuName != null">
         menu_name,
       </if>
@@ -49,6 +65,9 @@
       <if test="type != null">
         type,
       </if>
+      <if test="method != null">
+        method,
+      </if>
       <if test="menuIco != null">
         menu_ico,
       </if>
@@ -60,6 +79,9 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
         seq(),
+      <if test="menuCode != null">
+        #{menuCode,jdbcType=VARCHAR},
+      </if>
       <if test="menuName != null">
         #{menuName,jdbcType=VARCHAR},
       </if>
@@ -72,6 +94,9 @@
       <if test="type != null">
         #{type,jdbcType=CHAR},
       </if>
+      <if test="method != null">
+        #{method,jdbcType=CHAR},
+      </if>
       <if test="menuIco != null">
         #{menuIco,jdbcType=VARCHAR},
       </if>
@@ -82,9 +107,13 @@
         now()
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gy.model.sys.Menu">
+
+  <update id="updateMenu" parameterType="com.gy.domain.dto.sys.Menu">
     update sys_menu
     <set>
+      <if test="menuCode != null">
+        menu_code = #{menuCode,jdbcType=VARCHAR},
+      </if>
       <if test="menuName != null">
         menu_name = #{menuName,jdbcType=VARCHAR},
       </if>
@@ -96,6 +125,9 @@
       </if>
       <if test="type != null">
         type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="method != null">
+        method = #{method,jdbcType=VARCHAR},
       </if>
       <if test="menuIco != null">
         menu_ico = #{menuIco,jdbcType=VARCHAR},
@@ -112,16 +144,11 @@
     </set>
     where menu_id = #{menuId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.gy.model.sys.Menu">
-    update sys_menu
-    set menu_name = #{menuName,jdbcType=VARCHAR},
-      parent_id = #{parentId,jdbcType=INTEGER},
-      url = #{url,jdbcType=VARCHAR},
-      type = #{type,jdbcType=CHAR},
-      menu_ico = #{menuIco,jdbcType=VARCHAR},
-      sort = #{sort,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where menu_id = #{menuId,jdbcType=INTEGER}
-  </update>
+
+  <select id="selectListMenuParentId" resultType="String">
+    select t2.menu_id from (
+          select @r as id, (select @r:=parent_id from sys_menu where menu_id = id limit 1) as parent_id, @l:=@l + 1 as lvl
+          from (select @r := #{menuId, jdbcType=VARCHAR}, @l := 0) as vars, sys_menu
+    ) t1 join sys_menu t2 on t1.id=t2.menu_id and t1.id is not null order by t1.lvl desc
+  </select>
 </mapper>

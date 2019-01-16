@@ -35,13 +35,13 @@ public class GyRedisFactory {
 	}
 
 
-	private static class MhsRedisFactoryHodler {
+	private static class MhsRedisFactoryHandler {
 		private static GyRedisFactory instance = new GyRedisFactory();
 	}
 
 
 	public static GyRedisFactory getInstance() {
-		return MhsRedisFactoryHodler.instance;
+		return MhsRedisFactoryHandler.instance;
 	}
 
 

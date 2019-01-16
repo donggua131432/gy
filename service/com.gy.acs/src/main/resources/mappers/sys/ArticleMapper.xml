@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.ArticleMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.vo.req.ArticleContentReq">
+    <id column="article_id" jdbcType="CHAR" property="articleId" />
+    <result column="whole_makeup_id" jdbcType="CHAR" property="wholeMakeupId" />
+    <result column="link_text" jdbcType="VARCHAR" property="linkText" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="article_title" jdbcType="VARCHAR" property="articleTitle" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+    <resultMap id="BaseResultMapVo" type="com.gy.domain.dto.makeup.Article">
+        <id column="article_id" jdbcType="CHAR" property="articleId" />
+        <result column="whole_makeup_id" jdbcType="CHAR" property="wholeMakeupId" />
+        <result column="link_text" jdbcType="VARCHAR" property="linkText" />
+        <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+        <result column="article_title" jdbcType="VARCHAR" property="articleTitle" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="sfi.file_id" jdbcType="CHAR" property="imageId"/>
+        <result column="sfi.file_path" jdbcType="VARCHAR" property="imageAddress"/>
+        <collection property="articleContentList" ofType="com.gy.domain.dto.makeup.ArticleContent"
+                    select="com.gy.mapper.makeup.ArticleContentMapper.selectArticleContent" column="article_id"/>
+    </resultMap>
+  <sql id="Base_Column_List">
+    article_id, whole_makeup_id, link_text, link_url, article_title, create_time
+  </sql>
+
+  <select id="selectArticle" parameterType="java.lang.String" resultMap="BaseResultMapVo">
+    select sa.article_id, sa.whole_makeup_id, sa.link_text, sa.link_url, sa.article_title, sa.create_time,
+    sac.sac_id, sac.sac, sac.content_type, sac.article_content,
+    sfi.file_id, sfi.file_path, sfir.file_type,
+    from sp_article sa
+    left join sys_file_info_rel sfir on sfir.rel_id = sa.article_id
+    left join sys_file_info sfi on sfi.file_id = sfir.file_id
+    where whole_makeup_id = #{wholeMakeupId,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteArticleById" parameterType="java.lang.String">
+    delete from sp_article
+    where article_id = #{articleId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertArticle" parameterType="com.gy.domain.vo.req.ArticleReq">
+    insert into sp_article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="wholeMakeupId != null">
+        whole_makeup_id,
+      </if>
+      <if test="linkText != null">
+        link_text,
+      </if>
+      <if test="linkUrl != null">
+        link_url,
+      </if>
+      <if test="articleTitle != null">
+        article_title,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="articleId != null">
+        #{articleId,jdbcType=CHAR},
+      </if>
+      <if test="wholeMakeupId != null">
+        #{wholeMakeupId,jdbcType=CHAR},
+      </if>
+      <if test="linkText != null">
+        #{linkText,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null">
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="articleTitle != null">
+        #{articleTitle,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateArticleById" parameterType="com.gy.domain.vo.req.ArticleReq">
+    update sp_article
+    <set>
+      <if test="wholeMakeupId != null">
+        whole_makeup_id = #{wholeMakeupId,jdbcType=CHAR},
+      </if>
+      <if test="linkText != null">
+        link_text = #{linkText,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null">
+        link_url = #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="articleTitle != null">
+        article_title = #{articleTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where article_id = #{articleId,jdbcType=CHAR}
+  </update>
+
+</mapper>

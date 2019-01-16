@@ -2,7 +2,7 @@ package com.gy.feign;
 
 
 import com.gy.fallback.UserFeignHystrixClientFallBack;
-import com.gy.model.sys.User;
+import com.gy.domain.dto.sys.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

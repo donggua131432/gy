@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.sys.SysParamMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.SysParam">
+    <id column="param_id" jdbcType="CHAR" property="paramId" />
+    <result column="param_name" jdbcType="VARCHAR" property="paramName" />
+    <result column="param_value" jdbcType="VARCHAR" property="paramValue" />
+    <result column="sys_belong" jdbcType="VARCHAR" property="sysBelong" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="del_status" jdbcType="CHAR" property="delStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_user_id" jdbcType="VARCHAR" property="updateUserId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    param_id, param_name, param_value, sys_belong, description, del_status, create_time, 
+    update_time, update_user, update_user_id
+  </sql>
+  <select id="selectSysParam" parameterType="String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_param
+    where param_id = #{paramId,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteSysParam" parameterType="java.lang.String">
+    delete from sys_param
+    where param_id = #{paramId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertSysParam" parameterType="com.gy.domain.dto.sys.SysParam">
+    insert into sys_param
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="paramId != null">
+        param_id,
+      </if>
+      <if test="paramName != null">
+        param_name,
+      </if>
+      <if test="paramValue != null">
+        param_value,
+      </if>
+      <if test="sysBelong != null">
+        sys_belong,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="delStatus != null">
+        del_status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateUserId != null">
+        update_user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="paramId != null">
+        #{paramId,jdbcType=CHAR},
+      </if>
+      <if test="paramName != null">
+        #{paramName,jdbcType=VARCHAR},
+      </if>
+      <if test="paramValue != null">
+        #{paramValue,jdbcType=VARCHAR},
+      </if>
+      <if test="sysBelong != null">
+        #{sysBelong,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="delStatus != null">
+        #{delStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null">
+        #{updateUserId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSysParam" parameterType="com.gy.domain.dto.sys.SysParam">
+    update sys_param
+    <set>
+      <if test="paramName != null">
+        param_name = #{paramName,jdbcType=VARCHAR},
+      </if>
+      <if test="paramValue != null">
+        param_value = #{paramValue,jdbcType=VARCHAR},
+      </if>
+      <if test="sysBelong != null">
+        sys_belong = #{sysBelong,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="delStatus != null">
+        del_status = #{delStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null">
+        update_user_id = #{updateUserId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where param_id = #{paramId,jdbcType=CHAR}
+  </update>
+</mapper>

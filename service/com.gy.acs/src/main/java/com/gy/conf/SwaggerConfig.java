@@ -1,6 +1,6 @@
 package com.gy.conf;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +22,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@EnableSwaggerBootstrapUI
 /** 是否打开swagger **/
 @ConditionalOnExpression("'${swagger.enable}' == 'true'")
 public class SwaggerConfig {

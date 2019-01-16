@@ -4,9 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -20,15 +21,20 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableDiscoveryClient
 @SpringBootApplication(
     scanBasePackages = {
+        "com.gy.conf",
         "com.gy.controller",
         "com.gy.feign",
         "com.gy.fallback",
-        "com.gy.conf",
-        "com.gy.service"
+        "com.gy.service.*",
+        "com.gy.core.*",
+        "com.gy.shiro.*",
+        "com.gy.datasource",
+        "com.gy.oss"
     }, exclude = {
-
         RedisAutoConfiguration.class,
-        DataSourceAutoConfiguration.class
+        DataSourceAutoConfiguration.class,
+        MongoAutoConfiguration.class,
+        MongoDataAutoConfiguration.class
     }
 )
 @EnableWebMvc

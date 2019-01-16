@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.sys.DictItemMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.DictItem">
+    <id column="item_id" jdbcType="VARCHAR" property="itemId" />
+    <result column="dict_id" jdbcType="VARCHAR" property="dictId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="item_value" jdbcType="VARCHAR" property="itemValue" />
+    <result column="item_sort" jdbcType="INTEGER" property="itemSort" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    item_id, dict_id, item_name, item_value, item_sort, create_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_dict_item
+    where dict_id = #{dictId,jdbcType=VARCHAR} order by item_sort
+  </select>
+
+  <select id="selectDictItemsByDictId" resultType="map">
+    select item_name as itemName, item_value as itemValue from sys_dict_item
+    where dict_id = #{dictId,jdbcType=VARCHAR} order by item_sort
+  </select>
+
+
+  <delete id="deleteDictItemByItemId" parameterType="java.lang.String">
+    delete from sys_dict_item
+    where item_id = #{itemId,jdbcType=VARCHAR}
+  </delete>
+
+
+  <delete id="deleteDictItemByDictId" parameterType="java.lang.String">
+    delete from sys_dict_item
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.gy.domain.dto.sys.DictItem">
+    insert into sys_dict_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        item_id,
+      <if test="dictId != null">
+        dict_id,
+      </if>
+      <if test="itemName != null">
+        item_name,
+      </if>
+      <if test="itemValue != null">
+        item_value,
+      </if>
+      <if test="itemSort != null">
+        item_sort,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="dictId != null">
+        #{dictId,jdbcType=CHAR},
+      </if>
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemValue != null">
+        #{itemValue,jdbcType=VARCHAR},
+      </if>
+      <if test="itemSort != null">
+        #{itemSort,jdbcType=INTEGER},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gy.domain.dto.sys.DictItem">
+    update sys_dict_item
+    <set>
+      <if test="dictId != null">
+        dict_id = #{dictId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemValue != null">
+        item_value = #{itemValue,jdbcType=VARCHAR},
+      </if>
+      <if test="itemSort != null">
+        item_sort = #{itemSort,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where item_id = #{itemId,jdbcType=VARCHAR}
+  </update>
+</mapper>

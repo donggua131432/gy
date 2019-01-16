@@ -128,7 +128,7 @@ public class GySPIFactory {
 			logger.info("find val:{} failed,use Default Object",val);
 			return getDefaultExtension(list);
 		}
-		logger.error("YzSPIList is null! ");
+		logger.error("GySPIList is null! ");
 		return null;
 	}
 	

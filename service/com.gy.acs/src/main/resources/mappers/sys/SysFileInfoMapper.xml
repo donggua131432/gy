@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.sys.SysFileInfoMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.SysFileInfo">
+    <id column="file_id" jdbcType="CHAR" property="fileId" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_suffix" jdbcType="VARCHAR" property="fileSuffix" />
+    <result column="file_size" jdbcType="DECIMAL" property="fileSize" />
+    <result column="play_time" jdbcType="INTEGER" property="playTime" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+    <result column="file_status" jdbcType="CHAR" property="fileStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    file_id, file_name, file_suffix, file_size, play_time, file_path, file_status, create_time
+  </sql>
+
+  <select id="selectSysFileInfoPage" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_file_info
+    where file_name = #{fileName,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteSysFileInfoById" parameterType="java.lang.String">
+    delete from sys_file_info
+    where file_id = #{fileId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertSysFileInfo" parameterType="com.gy.domain.dto.sys.SysFileInfo">
+    insert into sys_file_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileId != null ">
+        file_id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileSuffix != null">
+        file_suffix,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="playTime != null">
+        play_time,
+      </if>
+      <if test="filePath != null">
+        file_path,
+      </if>
+      <if test="fileStatus != null">
+        file_status,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileId != null ">
+        #{fileId,jdbcType=CHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSuffix != null">
+        #{fileSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=DECIMAL},
+      </if>
+      <if test="playTime != null">
+        #{playTime,jdbcType=INTEGER},
+      </if>
+      <if test="filePath != null">
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileStatus != null">
+        #{fileStatus,jdbcType=CHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateSysFileInfoById" parameterType="com.gy.domain.dto.sys.SysFileInfo">
+    update sys_file_info
+    <set>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSuffix != null">
+        file_suffix = #{fileSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=DECIMAL},
+      </if>
+      <if test="playTime != null">
+        play_time = #{playTime,jdbcType=INTEGER},
+      </if>
+      <if test="filePath != null">
+        file_path = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileStatus != null">
+        file_status = #{fileStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where file_id = #{fileId,jdbcType=CHAR}
+  </update>
+
+</mapper>

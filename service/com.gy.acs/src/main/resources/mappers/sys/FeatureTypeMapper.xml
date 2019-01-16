@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.FeatureTypeMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.makeup.FeatureType">
+    <id column="feature_type_id" jdbcType="CHAR" property="featureTypeId" />
+    <result column="organ_id" jdbcType="CHAR" property="organId" />
+    <result column="feature_type_name" jdbcType="VARCHAR" property="featureTypeName" />
+    <result column="priority_lvl" jdbcType="INTEGER" property="priorityLvl" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    feature_type_id, organ_id, feature_type_name, priority_lvl, create_time
+  </sql>
+
+  <select id="selectListFeatureTypePage" parameterType="com.gy.domain.vo.req.makeup.FeatureTypeQuery" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from sp_feature_type
+    where 1=1
+    <if test="organId != null and organId !=''">
+      and organ_id = #{organId,jdbcType=CHAR}
+    </if>
+  </select>
+
+  <delete id="deleteFeatureTypeById" parameterType="java.lang.String">
+    delete from sp_feature_type
+    where feature_type_id = #{featureTypeId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertFeatureType" parameterType="com.gy.domain.dto.makeup.FeatureType">
+    insert into sp_feature_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        feature_type_id,
+      <if test="organId != null">
+        organ_id,
+      </if>
+      <if test="featureTypeName != null">
+        feature_type_name,
+      </if>
+      <if test="priorityLvl != null">
+        priority_lvl,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="organId != null">
+        #{organId,jdbcType=CHAR},
+      </if>
+      <if test="featureTypeName != null">
+        #{featureTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="priorityLvl != null">
+        #{priorityLvl,jdbcType=INTEGER},
+      </if>
+      now()
+    </trim>
+  </insert>
+
+  <update id="updateFeatureTypeById" parameterType="com.gy.domain.dto.makeup.FeatureType">
+    update sp_feature_type
+    <set>
+      <if test="organId != null">
+        organ_id = #{organId,jdbcType=CHAR},
+      </if>
+      <if test="featureTypeName != null">
+        feature_type_name = #{featureTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="priorityLvl != null">
+        priority_lvl = #{priorityLvl,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where feature_type_id = #{featureTypeId,jdbcType=CHAR}
+  </update>
+</mapper>

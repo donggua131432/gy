@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gy.mapper.sys.RoleMapper">
-  <resultMap id="BaseResultMap" type="com.gy.model.sys.Role">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.Role">
     <id column="role_id" jdbcType="CHAR" property="roleId" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
     <result column="role_name" jdbcType="VARCHAR" property="roleName" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="CHAR" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    role_id, role_name, remark, status, create_time
+    role_id, role_code, role_name, remark, status, create_time
   </sql>
 
   <select id="selectRoleById" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -19,15 +20,44 @@
     where role_id = #{roleId,jdbcType=CHAR}
   </select>
 
+  <select id="selectRoleRules" resultType="com.gy.shiro.rule.RolePermRule">
+    select concat(sm.url, "==", ucase(sm.method)) as url, group_concat(sr.role_code order by sm.url) as needroles
+    from sys_menu sm
+    left join sys_role_menu_rel srmr on sm.menu_id = srmr.menu_id
+    left join sys_role sr on srmr.role_id = sr.role_id
+    where sm.type = 2 group by sm.url,sm.menu_id
+  </select>
+
+  <select id="selectListRolePage" parameterType="com.gy.domain.vo.req.RoleQuery" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from sys_role
+    where 1=1
+    <if test="roleId != null and roleId!=''">
+      and role_id = #{roleId,jdbcType=CHAR}
+    </if>
+    <if test="roleCode != null and roleCode!=''">
+      and role_code = #{roleCode,jdbcType=VARCHAR}
+    </if>
+    <if test="roleName != null and roleName!=''">
+      and role_name like CONCAT('%', #{roleName,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="status != null and status!=''">
+      and status = #{status,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+
   <delete id="deleteRoleById" parameterType="java.lang.String">
     delete from sys_role
     where role_id = #{roleId,jdbcType=CHAR}
   </delete>
 
-  <insert id="insertRole" parameterType="com.gy.model.sys.Role">
+  <insert id="insertRole" parameterType="com.gy.domain.dto.sys.Role">
     insert into sys_role
     <trim prefix="(" suffix=")" suffixOverrides=",">
       role_id,
+      <if test="roleCode != null">
+        role_code,
+      </if>
       <if test="roleName != null">
         role_name,
       </if>
@@ -37,12 +67,13 @@
       <if test="status != null">
         status,
       </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
+      create_time,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       seq(),
+      <if test="roleCode != null">
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
       <if test="roleName != null">
         #{roleName,jdbcType=VARCHAR},
       </if>
@@ -52,15 +83,16 @@
       <if test="status != null">
         #{status,jdbcType=CHAR},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
+      now()
     </trim>
   </insert>
 
-  <update id="updateRole" parameterType="com.gy.model.sys.Role">
+  <update id="updateRole" parameterType="com.gy.domain.dto.sys.Role">
     update sys_role
     <set>
+      <if test="roleCode != null">
+        role_code = #{roleCode,jdbcType=VARCHAR},
+      </if>
       <if test="roleName != null">
         role_name = #{roleName,jdbcType=VARCHAR},
       </if>
@@ -69,9 +101,6 @@
       </if>
       <if test="status != null">
         status = #{status,jdbcType=CHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where role_id = #{roleId,jdbcType=CHAR}

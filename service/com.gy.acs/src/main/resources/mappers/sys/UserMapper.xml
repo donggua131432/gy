@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gy.mapper.sys.UserMapper">
-  <resultMap id="BaseResultMap" type="com.gy.model.sys.User">
+
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.User">
     <id column="user_id" jdbcType="CHAR" property="userId" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="password" jdbcType="CHAR" property="password" />
@@ -10,44 +11,57 @@
     <result column="mobile" jdbcType="VARCHAR" property="mobile" />
     <result column="status" jdbcType="CHAR" property="status" />
     <result column="dept_id" jdbcType="CHAR" property="deptId" />
-    <result column="crete_time" jdbcType="TIMESTAMP" property="creteTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_user_id" jdbcType="CHAR" property="updateUserId" />
     <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="token" jdbcType="VARCHAR" property="token" />
   </resultMap>
+
+
   <sql id="Base_Column_List">
-    user_id, user_name, password, salt, email, mobile, status, dept_id, crete_time, update_user_id, 
+    user_id, user_name, password, salt, email, mobile, status, dept_id, create_time, update_user_id,
     update_user_name, update_time, token
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from sys_user
-    where user_id = #{userId,jdbcType=CHAR}
+
+  <select id="selectUserById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_user where user_id = #{appId,jdbcType=CHAR}
+    or user_name = #{appId,jdbcType=VARCHAR}
+    or mobile = #{appId,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from sys_user
-    where user_id = #{userId,jdbcType=CHAR}
+
+    <select id="selectListUserPage" parameterType="com.gy.domain.vo.req.UserQuery" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from sys_user where 1 = 1
+
+        <if test="userName != null and userName !=''">
+            and user_name = #{userName,jdbcType=VARCHAR},
+        </if>
+
+        <if test="deptId != null and deptId !=''">
+            and dept_id = #{deptId,jdbcType=CHAR},
+        </if>
+
+    </select>
+
+
+  <select id="selectUserRoles" parameterType="java.lang.String" resultType="java.lang.String">
+    select group_concat(sr.role_code) as roles
+    from sys_user su
+    join sys_user_role_rel surl on surl.user_id = su.user_id
+    join sys_role sr on sr.role_id = surl.role_id
+    where su.user_id = #{userId,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteUserById" parameterType="java.lang.String">
+    delete from sys_user where user_id = #{userId,jdbcType=CHAR}
   </delete>
-  <insert id="insert" parameterType="com.gy.model.sys.User">
-    insert into sys_user (user_id, user_name, password, 
-      salt, email, mobile, status, 
-      dept_id, crete_time, update_user_id, 
-      update_user_name, update_time, token
-      )
-    values (#{userId,jdbcType=CHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, 
-      #{salt,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
-      #{deptId,jdbcType=CHAR}, #{creteTime,jdbcType=TIMESTAMP}, #{updateUserId,jdbcType=CHAR}, 
-      #{updateUserName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{token,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.gy.model.sys.User">
+
+  <insert id="insertUser" parameterType="com.gy.domain.dto.sys.User">
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
         user_id,
-      </if>
       <if test="userName != null">
         user_name,
       </if>
@@ -69,9 +83,7 @@
       <if test="deptId != null">
         dept_id,
       </if>
-      <if test="creteTime != null">
-        crete_time,
-      </if>
+        create_time,
       <if test="updateUserId != null">
         update_user_id,
       </if>
@@ -82,13 +94,11 @@
         update_time,
       </if>
       <if test="token != null">
-        token,
+        token
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        #{userId,jdbcType=CHAR},
-      </if>
+      seq(),
       <if test="userName != null">
         #{userName,jdbcType=VARCHAR},
       </if>
@@ -110,9 +120,7 @@
       <if test="deptId != null">
         #{deptId,jdbcType=CHAR},
       </if>
-      <if test="creteTime != null">
-        #{creteTime,jdbcType=TIMESTAMP},
-      </if>
+      now(),
       <if test="updateUserId != null">
         #{updateUserId,jdbcType=CHAR},
       </if>
@@ -123,11 +131,12 @@
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="token != null">
-        #{token,jdbcType=VARCHAR},
+        #{token,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gy.model.sys.User">
+
+  <update id="updateUser" parameterType="com.gy.domain.dto.sys.User">
     update sys_user
     <set>
       <if test="userName != null">
@@ -151,8 +160,8 @@
       <if test="deptId != null">
         dept_id = #{deptId,jdbcType=CHAR},
       </if>
-      <if test="creteTime != null">
-        crete_time = #{creteTime,jdbcType=TIMESTAMP},
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateUserId != null">
         update_user_id = #{updateUserId,jdbcType=CHAR},
@@ -169,20 +178,8 @@
     </set>
     where user_id = #{userId,jdbcType=CHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.gy.model.sys.User">
-    update sys_user
-    set user_name = #{userName,jdbcType=VARCHAR},
-      password = #{password,jdbcType=CHAR},
-      salt = #{salt,jdbcType=CHAR},
-      email = #{email,jdbcType=VARCHAR},
-      mobile = #{mobile,jdbcType=VARCHAR},
-      status = #{status,jdbcType=CHAR},
-      dept_id = #{deptId,jdbcType=CHAR},
-      crete_time = #{creteTime,jdbcType=TIMESTAMP},
-      update_user_id = #{updateUserId,jdbcType=CHAR},
-      update_user_name = #{updateUserName,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      token = #{token,jdbcType=VARCHAR}
-    where user_id = #{userId,jdbcType=CHAR}
+
+  <update id="reSetPassword" parameterType="java.lang.String">
+      update sys_user set password = #{password,jdbcType=CHAR} where user_id = #{userId,jdbcType=CHAR};
   </update>
 </mapper>

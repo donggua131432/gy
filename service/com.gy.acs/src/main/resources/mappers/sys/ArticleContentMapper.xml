@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.ArticleContentMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.vo.req.ArticleContentReq">
+    <id column="sac_id" jdbcType="CHAR" property="sacId" />
+    <result column="article_id" jdbcType="CHAR" property="articleId" />
+    <result column="content_type" jdbcType="CHAR" property="contentType" />
+    <result column="article_content" jdbcType="VARCHAR" property="articleContent" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+  </resultMap>
+  <resultMap id="BaseResultMapVo" type="com.gy.domain.dto.makeup.ArticleContent">
+    <id column="sac_id" jdbcType="CHAR" property="sacId" />
+    <result column="article_id" jdbcType="CHAR" property="articleId" />
+    <result column="content_type" jdbcType="CHAR" property="contentType" />
+    <result column="article_content" jdbcType="VARCHAR" property="articleContent" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="file_id" jdbcType="CHAR" property="fileId"/>
+    <result column="sfi.file_id" jdbcType="CHAR" property="fileAddress"/>
+    <collection property="lampList" ofType="com.gy.domain.dto.makeup.Lamp" javaType="java.util.ArrayList" select="getLamp" column="sac_id"/>
+  </resultMap>
+  <resultMap id="BaseResultMapLamp" type="com.gy.domain.dto.makeup.Lamp">
+    <id column="fileId" jdbcType="CHAR" property="fileId"/>
+    <result column="fileAddress" jdbcType="VARCHAR" property="fileAddress"/>
+    <result column="sort" jdbcType="VARCHAR" property="sort"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    sac_id, article_id, content_type, article_content, sort
+  </sql>
+
+  <select id="selectArticleContent" parameterType="java.lang.String" resultMap="BaseResultMapVo">
+    select sac.sac_id, sac.article_id, sac.content_type, sac.article_content, sac.sort
+    sfi.file_id, sfi.file_path, sfir.file_type
+    from sp_article_content sac
+    left join sys_file_info_rel sfir on sfir.rel_id = sac.article_id
+    left join sys_file_info sfi on sfi.file_id = sfir.file_id
+    where article_id = #{articleId,jdbcType=CHAR}
+  </select>
+
+  <select id="getLamp" parameterType="string" resultMap="BaseResultMapLamp">
+    select sfi.file_id, sfi.file_path, sfir.file_type
+    from sp_article_content sac
+    left join sys_file_info_rel sfir on sac.sac_id = sfir.rel_id
+    left join sys_file_info sfi on sfir.file_id = sfi.file_id
+  </select>
+
+  <delete id="deleteArticleContentBatchById" parameterType="java.util.List">
+    delete from sp_article_content where sac_id in
+    <foreach collection="sacIdList" item="sacId" index="index" separator="," open="(" close=")">
+      #{sacId}
+    </foreach>
+  </delete>
+
+  <insert id="insertArticleContent" parameterType="com.gy.domain.vo.req.ArticleContentReq">
+    insert into sp_article_content
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sacId != null">
+        sac_id,
+      </if>
+      <if test="articleId != null">
+        article_id,
+      </if>
+      <if test="contentType != null">
+        content_type,
+      </if>
+      <if test="articleContent != null">
+        article_content,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sacId != null">
+        #{sacId,jdbcType=CHAR},
+      </if>
+      <if test="articleId != null">
+        #{articleId,jdbcType=CHAR},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=CHAR},
+      </if>
+      <if test="articleContent != null">
+        #{articleContent,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="insertArticleContentBatch" parameterType="java.util.List">
+    insert into sp_article_content (sac_id, article_id, content_type, article_content, sort) values
+    <foreach collection="articleContentReqList" item="acr" index="index" separator=",">
+      (#{acr.sacId,jdbcType=CHAR},#{acr.articleId,jdbcType=CHAR},#{acr.contentType,jdbcType=CHAR},#{acr.articleContent,jdbcType=VARCHAR},#{acr.sort,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <update id="updateArticleContentBatchById" parameterType="java.util.List">
+    update sp_article_content set
+    article_id = case sac_id
+      <foreach collection="articleContentReqList" item="a" index="index">
+        when #{a.sacId} then #{a.articleId}
+      </foreach>
+    end,
+    content_type = case sac_id
+      <foreach collection="articleContentReqList" item="a" index="index">
+        when #{a.sacId} then #{a.contentType}
+      </foreach>
+    end,
+    article_content = case sac_id
+      <foreach collection="articleContentReqList" item="a" index="index">
+        when #{a.sacId} then #{a.articleContent}
+      </foreach>
+    end,
+    sort = case sac_id
+      <foreach collection="articleContentReqList" item="a" index="index">
+        when #{a.sacId} then #{a.sort}
+      </foreach>
+    end
+    where sac_id in
+    <foreach collection="articleContentReqList" item="a" index="index" separator="," open="(" close=")">
+      #{a.sacId}
+    </foreach>
+  </update>
+
+</mapper>

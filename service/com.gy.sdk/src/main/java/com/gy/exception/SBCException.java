@@ -5,11 +5,10 @@ import com.gy.enums.StatusEnum;
 import java.io.Serializable;
 
 /**
- * Function:通用异常
- *
- * @author crossoverJie
- *         Date: 2017/7/13 12:16
- * @since JDK 1.8
+ * @描述: 通用异常
+ * @作者: DuKai
+ * @创建时间: 2018/12/14 15:48
+ * @版本号: V1.0
  */
 public class SBCException extends RuntimeException implements Serializable{
     private static final long serialVersionUID = -8806370060612489108L;

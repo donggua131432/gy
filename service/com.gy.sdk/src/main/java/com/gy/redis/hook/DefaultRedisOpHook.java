@@ -1,6 +1,6 @@
 package com.gy.redis.hook;
 
-import com.gy.model.GetTokenChannel;
+import com.gy.domain.GetTokenChannel;
 import com.gy.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class DefaultRedisOpHook implements RedisOpHook<GetTokenChannel> {
 		GetTokenChannel channel = new GetTokenChannel();
 		channel.setTokenType(tokenType);
 		channel.setParam(param);
-		redis.publish(this.channel , JsonUtil.object2String(channel));
+		redis.publish(this.channel , JsonUtil.objectToString(channel));
 		sleep(200);
 		return null;
 	}

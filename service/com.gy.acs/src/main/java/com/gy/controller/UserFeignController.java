@@ -2,7 +2,7 @@ package com.gy.controller;
 
 import com.gy.feign.UserFeignHystrixClient;
 
-import com.gy.model.sys.User;
+import com.gy.domain.dto.sys.User;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

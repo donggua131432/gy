@@ -27,6 +27,8 @@ feign:
 logging:
   config: classpath:config/logback.xml
   dir: /home/www/webapp/logs/acs
+  level:
+    io.swagger.models.parameters.AbstractSerializableParameter: error #忽略swagger中的错误信息
 
 jdbc:
   global:
@@ -38,11 +40,14 @@ jdbc:
     maxActive: ${jdbc_maxActive}
     maxWait: ${jdbc_maxWait}
     minEictableIdleTimeMillis: ${jdbc_minEictableIdleTimeMillis}
-    defaultDatasource: admin
+    defaultDatasource: ac
   jdbcConfigInfos:
-    - name: admin
+    - name: ac
       url: ${jdbc_url}
-      uniqueResourceName: mysql.admin.write
+      uniqueResourceName: mysql.ac.write
+    - name: lc
+      url: ${jdbc_url_lc}
+      uniqueResourceName: mysql.lc.write
 redis.pool:
   minIdle: 10
   maxIdle: 300
@@ -59,6 +64,31 @@ redis.pool:
       authKey: ${redis_authKey}
       connectType: single
 
+mongo.pool:
+  address: ${mongo_address}
+  #replicaSet: reolicaName
+  database: ${mongo_database}
+  username: ${mongo_username}
+  password: ${mongo_password}
+  minConnectionsPerHost: ${mongo_min_connections_per_host}
+  maxConnectionsPerHost: ${mongo_max_connections_per_host}
+  threadsAllowedToBlockForConnectionMultiplier: ${mongo_threads_allowed_to_block_for_connection_multiplier}
+  serverSelectionTimeout: ${mongo_server_selection_timeout}
+  maxWaitTime: ${mongo_max_wait_time}
+  maxConnectionIdleTime: ${mongo_max_connection_idel_time}
+  maxConnectionLifeTime: ${mongo_max_connection_life_time}
+  connectTimeout: ${mongo_connect_timeout}
+  socketTimeout: ${mongo_socket_timeout}
+  #socketKeepAlive: false
+  sslEnabled: ${mongo_ssl_enabled}
+  sslInvalidHostNameAllowed: ${mongo_ssl_invalid_host_name_allowed}
+  alwaysUseMBeans: ${mongo_always_use_m_beans}
+  heartbeatSocketTimeout: ${mongo_heartbeat_socket_timeout}
+  heartbeatConnectTimeout: ${mongo_heartbeat_connect_timeout}
+  minHeartbeatFrequency: ${mongo_min_heartbeat_frequency}
+  heartbeatFrequency: ${mongo_heartbeat_frequency}
+  localThreshold: ${mongo_local_threshold}
+
 #mybatis分页
 pagehelper:
   helperDialect: mysql
@@ -68,4 +98,14 @@ pagehelper:
 
 # 是否打开swagger
 swagger:
-  enable: true
+  enable: ${swagger_enable}
+
+oss:
+  accessKeyId: ZnKvvfgo9oyBGlJW
+  accessKeySecret: WlEKUlkulSCJqbDFvZb0VP2QFpEsYl
+  endpoint: oss-cn-shenzhen.aliyuncs.com
+
+
+gysysconfig:
+   bucket: ${aliyun.oss.bucket}
+   filePath: ${aliyun.oss.file.path}

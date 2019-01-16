@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.OrganMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.makeup.Organ">
+    <id column="organ_id" jdbcType="CHAR" property="organId" />
+    <result column="organ_name" jdbcType="VARCHAR" property="organName" />
+    <result column="organ_desc" jdbcType="VARCHAR" property="organDesc" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    organ_id, organ_name, organ_desc, create_time
+  </sql>
+  <select id="selectListOrgan" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sp_organ
+  </select>
+  <delete id="deleteOrganById" parameterType="java.lang.String">
+    delete from sp_organ
+    where organ_id = #{organId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertOrgan" parameterType="com.gy.domain.dto.makeup.Organ">
+    insert into sp_organ
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        organ_id,
+      <if test="organName != null">
+        organ_name,
+      </if>
+      <if test="organDesc != null">
+        organ_desc,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="organName != null">
+        #{organName,jdbcType=VARCHAR},
+      </if>
+      <if test="organDesc != null">
+        #{organDesc,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateOrganById" parameterType="com.gy.domain.dto.makeup.Organ">
+    update sp_organ
+    <set>
+      <if test="organName != null">
+        organ_name = #{organName,jdbcType=VARCHAR},
+      </if>
+      <if test="organDesc != null">
+        organ_desc = #{organDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where organ_id = #{organId,jdbcType=CHAR}
+  </update>
+</mapper>

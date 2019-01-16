@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.OrganFeatureMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.vo.res.OrganFeatureVo">
+    <id column="feature_id" jdbcType="CHAR" property="featureId" />
+    <result column="feature_type_id" jdbcType="CHAR" property="featureTypeId" />
+    <result column="feature_code" jdbcType="VARCHAR" property="featureCode" />
+    <result column="feature_name" jdbcType="VARCHAR" property="featureName" />
+    <result column="feature_desc" jdbcType="VARCHAR" property="featureDesc" />
+    <result column="feature_script" jdbcType="VARCHAR" property="featureScript" />
+    <result column="organ_id" jdbcType="CHAR" property="organId"/>
+    <result column="organ_name" jdbcType="VARCHAR" property="organName"/>
+    <result column="feature_type_id" jdbcType="CHAR" property="featureTypeId" />
+    <result column="feature_type_name" jdbcType="VARCHAR" property="featureTypeName"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    feature_id, feature_type_id, feature_code, feature_name, feature_desc, feature_script, create_time
+  </sql>
+
+  <select id="selectListOrganFeaturePage" parameterType="com.gy.domain.vo.req.makeup.OrganFeatureQuery" resultMap="BaseResultMap">
+    select sof.feature_id, sof.feature_type_id, sof.feature_code, sof.feature_name, sof.feature_desc, sof.feature_script,
+      so.organ_id, so.organ_name, sof.feature_type_id, sft.feature_type_name
+    from sp_organ_feature sof
+    left join sp_feature_type sft on sof.feature_type_id = sft.feature_type_id
+    left join sp_organ so on sft.organ_id = so.organ_id
+    where 1 = 1
+    <if test="organId != null and organId != ''">
+      and organ_id = #{organId,jdbcTypeName=CHAR}
+    </if>
+    <if test="featureTypeId != null and featureTypeId !=''">
+      and sof.feature_type_id = #{featureTypeId,jdbcTypeName=CHAR}
+    </if>
+    <if test="featureName != null and featureName !=''">
+      and sof.feature_name = #{featureName,jdbcTypeName=VARCHAR}
+    </if>
+  </select>
+
+  <delete id="deleteOrganFeatureById" parameterType="java.lang.String">
+    delete from sp_organ_feature where feature_id = #{featureId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertOrganFeature" parameterType="com.gy.domain.dto.makeup.OrganFeature">
+    insert into sp_organ_feature
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        feature_id,
+      <if test="featureTypeId != null">
+        feature_type_id,
+      </if>
+      <if test="featureCode != null">
+        feature_code,
+      </if>
+      <if test="featureName != null">
+        feature_name,
+      </if>
+      <if test="featureDesc != null">
+        feature_desc,
+      </if>
+      <if test="featureScript != null">
+        feature_script,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      seq(),
+      <if test="featureTypeId != null">
+        #{featureTypeId,jdbcType=CHAR},
+      </if>
+      <if test="featureCode != null">
+        #{featureCode,jdbcType=VARCHAR},
+      </if>
+      <if test="featureName != null">
+        #{featureName,jdbcType=VARCHAR},
+      </if>
+      <if test="featureDesc != null">
+        #{featureDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="featureScript != null">
+        #{featureScript,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+
+  <update id="updateOrganFeatureById" parameterType="com.gy.domain.dto.makeup.OrganFeature">
+    update sp_organ_feature
+    <set>
+      <if test="featureTypeId != null">
+        feature_type_id = #{featureTypeId,jdbcType=CHAR},
+      </if>
+      <if test="featureCode != null">
+        feature_code = #{featureCode,jdbcType=VARCHAR},
+      </if>
+      <if test="featureName != null">
+        feature_name = #{featureName,jdbcType=VARCHAR},
+      </if>
+      <if test="featureDesc != null">
+        feature_desc = #{featureDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="featureScript != null">
+        feature_script = #{featureScript,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where feature_id = #{featureId,jdbcType=CHAR}
+  </update>
+
+</mapper>

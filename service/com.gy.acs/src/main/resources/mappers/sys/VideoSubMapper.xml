@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.VideoSubMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.makeup.VideoSub">
+    <id column="video_sub_id" jdbcType="CHAR" property="videoSubId" />
+    <result column="file_id" jdbcType="CHAR" property="fileId" />
+    <result column="end_time" jdbcType="INTEGER" property="endTime" />
+    <result column="step_name" jdbcType="VARCHAR" property="stepName" />
+    <result column="zip_id" jdbcType="VARCHAR" property="zipId" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    video_sub_id, file_id, end_time, step_name, zip_id, sort, create_time
+  </sql>
+
+  <select id="selectVideoSub" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sp_video_sub
+    where file_id = #{fileId,jdbcType=CHAR}
+  </select>
+  <!--批量删除视频分段信息-->
+  <delete id="deleteVideoSubBatch" parameterType="java.util.List">
+    delete from sp_video_sub where video_sub_id in
+    <foreach collection="videoSubList" item="item" index="index" separator="," open="(" close=")">
+      #{item.videoSubId,jdbcType=CHAR}
+    </foreach>
+
+  </delete>
+  <!--删除一个视频的所有分段视频信息-->
+  <delete id="deleteVideoSubById" parameterType="java.lang.String">
+    delete from sp_video_sub where file_id = #{fileId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertVideoSubBatch" parameterType="java.util.List">
+    insert into sp_video_sub (video_sub_id, file_id, end_time, step_name, zip_id, sort, create_time) values
+    <foreach collection="videoSubList" item="videoSub" index="index" separator="," >
+      (seq(),  #{videoSub.fileId,jdbcType=CHAR}, #{videoSub.endTime,jdbcType=INTEGER}, #{videoSub.stepName,jdbcType=VARCHAR},
+      #{videoSub.zipId,jdbcType=VARCHAR}, #{videoSub.sort,jdbcType=INTEGER}, now())
+    </foreach>
+  </insert>
+
+  <update id="updateVideoSubByIdBatch" parameterType="java.util.List">
+    update sp_video_sub set
+    file_id = case video_sub_id
+      <foreach collection="videoSubList" item="v" index="index">
+        when #{v.videoSubId} then #{v.fileId}
+      </foreach>
+    end,
+    end_time = case video_sub_id
+      <foreach collection="videoSubList" item="v" index="index">
+        when #{v.videoSubId} then #{v.endTime}
+      </foreach>
+    end,
+    step_name = case video_sub_id
+      <foreach collection="videoSubList" item="v" index="index">
+        when #{v.videoSubId} then #{v.stepName}
+      </foreach>
+    end,
+    zip_id = case video_sub_id
+      <foreach collection="videoSubList" item="v" index="index">
+        when #{v.videoSubId} then #{v.zipId}
+      </foreach>
+    end,
+    sort = case video_sub_id
+      <foreach collection="videoSubList" item="v" index="index">
+        when #{v.videoSubId} then #{v.sort}
+      </foreach>
+    end
+    where video_sub_id in
+    <foreach collection="videoSubList" item="v" index="index" separator="," open="(" close=")">
+      #{v.videoSubId}
+    </foreach>
+  </update>
+</mapper>

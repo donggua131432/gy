@@ -23,7 +23,10 @@
 
 	<!-- 设置别名 -->
 	<typeAliases>
-		<package name="com.gy.model" />
+		<package name="com.gy.domain.dto" />
+		<package name="com.gy.domain.vo.req" />
+		<package name="com.gy.domain.vo.req.organ" />
+		<package name="com.gy.domain.vo.res" />
 	</typeAliases>
 
 	<!--<plugins>

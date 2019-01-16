@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.KolMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.sys.Kol">
+    <id column="kol_id" jdbcType="CHAR" property="kolId" />
+    <result column="kol_name" jdbcType="VARCHAR" property="kolName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath"/>
+    <result column="file_id" jdbcType="CHAR" property="fileId"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    kol_id, kol_name, sk.create_time,sfi.file_path,sfi.file_id
+  </sql>
+
+  <select id="selectKolPage"  resultMap="BaseResultMap" parameterType="com.gy.domain.vo.req.KolQuery">
+    select <include refid="Base_Column_List" />
+    from sp_kol as sk
+    left join sys_file_info_rel as sfir on sk.kol_id = sfir.rel_id
+    left join sys_file_info as sfi on sfir.file_id = sfi.file_id
+    where 1=1
+    <if test="kolName != null and kolName !=''">
+      and kol_name = #{kolName,jdbcTypeName=VARCHAR}
+    </if>
+  </select>
+
+  <delete id="deleteKolById" parameterType="java.lang.String">
+    delete from sp_kol
+    where kol_id = #{kolId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertKol" parameterType="java.lang.String">
+    insert into sp_kol(kol_id,kol_name,create_time)
+    values (#{kolId,jdbcType=CHAR},#{kolName,jdbcType=VARCHAR},now())
+  </insert>
+
+  <update id="updateKolById" parameterType="com.gy.domain.dto.sys.Kol">
+    update sp_kol
+    <set>
+      <if test="kolName != null">
+        kol_name = #{kolName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where kol_id = #{kolId,jdbcType=CHAR}
+  </update>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gy.mapper.makeup.OrganDefineMapper">
+  <resultMap id="BaseResultMap" type="com.gy.domain.dto.makeup.OrganDefine">
+    <id column="organ_define_id" jdbcType="CHAR" property="organDefineId" />
+    <result column="organ_id" jdbcType="CHAR" property="organId" />
+    <result column="literary_name" jdbcType="VARCHAR" property="literaryName" />
+    <result column="organ_slogan" jdbcType="VARCHAR" property="organSlogan" />
+    <result column="organ_remark" jdbcType="VARCHAR" property="organRemark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    organ_define_id, organ_id, literary_name, organ_slogan, organ_remark, create_time
+  </sql>
+
+  <select id="selectOrganDefine" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from sp_organ_define
+  </select>
+
+  <resultMap id="OrganDefineVoMap" type="com.gy.domain.vo.res.OrganDefineVo">
+    <id column="organ_define_id" jdbcType="CHAR" property="organDefineId" />
+    <result column="organ_id" jdbcType="CHAR" property="organId"/>
+    <result column="organ_name" jdbcType="VARCHAR" property="organName"/>
+    <result column="literary_name" jdbcType="VARCHAR" property="literaryName"/>
+    <result column="organ_slogan" jdbcType="VARCHAR" property="organSlogan"/>
+    <result column="organ_remark" jdbcType="VARCHAR" property="organRemark"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <collection property="organDefineArrayVoList" ofType="com.gy.domain.vo.res.OrganDefineArrayVo"
+                select="com.gy.mapper.makeup.OrganDefineArrayMapper.selectOrganDefineArrayVo" column="organ_define_id"/>
+  </resultMap>
+  <select id="selectListOrganDefinePage" parameterType="Map" resultMap="OrganDefineVoMap">
+    select soda.organ_define_id, soda.organ_id, so.organ_name, soda.literary_name,
+      soda.organ_slogan, soda.organ_remark, soda.create_time
+    from sp_organ_define as soda
+    left join sp_organ as so on so.organ_id = soda.organ_id
+    where 1 = 1
+    <if test="organId != null and organId !=''">
+      and so.organ_id = #{organId,jdbcTypeName=CHAR}
+    </if>
+    <if test="organName != null and organName !=''">
+      and so.organ_name like CONCAT('%',#{organName,jdbcTypeName=VARCHAR},'%')
+    </if>
+  </select>
+
+  <delete id="deleteOrganDefineById" parameterType="java.lang.String">
+    delete from sp_organ_define
+    where organ_define_id = #{organDefineId,jdbcType=CHAR}
+  </delete>
+
+  <insert id="insertOrganDefine" parameterType="com.gy.domain.dto.makeup.OrganDefine">
+    insert into sp_organ_define
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="organDefineId != null">
+        organ_define_id,
+      </if>
+      <if test="organId != null">
+        organ_id,
+      </if>
+      <if test="literaryName != null">
+        literary_name,
+      </if>
+      <if test="organSlogan != null">
+        organ_slogan,
+      </if>
+      <if test="organRemark != null">
+        organ_remark,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="organDefineId != null">
+        #{organDefineId,jdbcType=CHAR},
+      </if>
+      <if test="organId != null">
+        #{organId,jdbcType=CHAR},
+      </if>
+      <if test="literaryName != null">
+        #{literaryName,jdbcType=VARCHAR},
+      </if>
+      <if test="organSlogan != null">
+        #{organSlogan,jdbcType=VARCHAR},
+      </if>
+      <if test="organRemark != null">
+        #{organRemark,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+
+  <update id="updateOrganDefineById" parameterType="com.gy.domain.dto.makeup.OrganDefine">
+    update sp_organ_define
+    <set>
+      <if test="organId != null">
+        organ_id = #{organId,jdbcType=CHAR},
+      </if>
+      <if test="literaryName != null">
+        literary_name = #{literaryName,jdbcType=VARCHAR},
+      </if>
+      <if test="organSlogan != null">
+        organ_slogan = #{organSlogan,jdbcType=VARCHAR},
+      </if>
+      <if test="organRemark != null">
+        organ_remark = #{organRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where organ_define_id = #{organDefineId,jdbcType=CHAR}
+  </update>
+
+</mapper>

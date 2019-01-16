@@ -20,17 +20,13 @@ import java.util.TimeZone;
 public class DateUtil extends DateUtils {
 
 	public static final String YYYYMMDD_SPLIT = "yyyy-MM-dd";
-
 	public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
-
 	public static final String YYYYMMDDHHMMSS_SPLIT = "yyyy-MM-dd HH:mm:ss";
-	
 	public static final String HHMM_SPLIT = "HH:mm";
 	
 
 	/**
 	 * 判断是否在时间段内
-	 * 
 	 * @param startTime
 	 * @param endTime
 	 * @return
@@ -45,7 +41,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 获取字符串HH:mm时间戳
-	 * 
 	 * @param timeStr
 	 * @return
 	 * @throws ParseException
@@ -60,7 +55,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 获取当前时间，HH:mm 时间戳
-	 * 
 	 * @return
 	 * @throws ParseException
 	 */
@@ -75,6 +69,7 @@ public class DateUtil extends DateUtils {
 	public static String formatDate(Date date, String pattern) {
 		return getDateFormat(pattern).format(date);
 	}
+
 	/**
 	 * 获取当前日期 
 	 * @return
@@ -105,13 +100,11 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 比较日期大小
-	 * 
 	 * @param dateStr0
 	 * @param dateStr1
 	 * @return
 	 * @throws ParseException 
 	 */
-
 	public static int compareDate(String dateStr0, String dateStr1, String pattern) throws ParseException {
 		Date date1 = convertDateStrToDate(dateStr0, pattern);
 		Date date2 = convertDateStrToDate(dateStr1, pattern);
@@ -128,11 +121,8 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 把日期字符串转换成日期
-	 * 
-	 * @param dateStr
-	 *            日期字符串
-	 * @param pattern
-	 *            "date":日期, "datetime":日期和时间
+	 * @param dateStr 日期字符串
+	 * @param pattern "date":日期, "datetime":日期和时间
 	 * @return
 	 * @throws ParseException 
 	 */
@@ -154,7 +144,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 是否闰年
-	 * 
 	 * @param year
 	 * @return
 	 */
@@ -165,7 +154,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 是否闰年
-	 * 
 	 * @param date
 	 * @return
 	 */
@@ -178,7 +166,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 计算给定日期当年总天数
-	 * 
 	 * @param date
 	 * @return
 	 */
@@ -190,7 +177,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 计算给定日期当年剩余天数
-	 * 
 	 * @param date
 	 * @return
 	 */
@@ -203,9 +189,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 获得星期几(周日为1，周六为7)
-	 * 
-	 * @param date
-	 *            给定日期
+	 * @param date 给定日期
 	 * @return
 	 */
 	public static int getDay(Date date) {
@@ -216,7 +200,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 获得星期几（中文）
-	 * 
 	 * @param date
 	 * @return
 	 */
@@ -246,9 +229,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 计算给定日期所在月的第一天
-	 * 
-	 * @param date
-	 *            给定日期
+	 * @param date 给定日期
 	 * @return
 	 */
 	public static Date getFirstDayOfMonth(Date date) {
@@ -260,9 +241,7 @@ public class DateUtil extends DateUtils {
 	
 	/**
 	 * 计算给定日期所在月的下一个月的第一天
-	 * 
-	 * @param date
-	 *            给定日期
+	 * @param date 给定日期
 	 * @return
 	 */
 	public static Date getFirstDayOfNextMonth(Date date) {
@@ -275,9 +254,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 计算给定日期所在月的最后一天
-	 * 
-	 * @param date
-	 *            给定日期
+	 * @param date 给定日期
 	 * @return
 	 */
 	public static Date getLastDayOfMonth(Date date) {
@@ -289,9 +266,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 计算给定日期所在周的第一天(周一)
-	 * 
-	 * @param date
-	 *            给定日期
+	 * @param date 给定日期
 	 * @return
 	 */
 	public static Date getFirstDayOfWeek(Date date) {
@@ -306,9 +281,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 计算给定日期所在月的最后一天(周日)
-	 * 
-	 * @param date
-	 *            给定日期
+	 * @param date 给定日期
 	 * @return
 	 */
 	public static Date getLastDayOfWeek(Date date) {
@@ -332,9 +305,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 获取指定日期时间向前后向后推移n天的时间日期
-	 * 
-	 * @param days
-	 *            推移天数 把日期往后增加一天.整数往后推,负数往前移动
+	 * @param days  推移天数 把日期往后增加一天.整数往后推,负数往前移动
 	 */
 	public static String dateTimeAddOrReduceDays(String dateTimeStr, int days) {
 		String dateStr = "";
@@ -354,9 +325,7 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 获取指定日期时间向前后向后推移n天的时间日期
-	 * 
-	 * @param days
-	 *            推移天数 把日期往后增加一天.整数往后推,负数往前移动
+	 * @param days 推移天数 把日期往后增加一天.整数往后推,负数往前移动
 	 */
 	public static Date addDay(Date date, int days) {
 		Calendar calendar = new GregorianCalendar();
@@ -367,7 +336,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 将时间戳转换为时间
-	 * 
 	 * @param s
 	 * @return
 	 */
@@ -385,7 +353,6 @@ public class DateUtil extends DateUtils {
 
 	/**
 	 * 将Date转换为时间
-	 * 
 	 * @param date
 	 * @return
 	 */
@@ -398,9 +365,7 @@ public class DateUtil extends DateUtils {
 	
 	/**
 	 * 获取指定日期时间向前后向后推移n分钟的时间日期
-	 * 
-	 * @param minutes
-	 *            推移分钟数 把日期往后增加一分钟.整数往后推,负数往前移动
+	 * @param minutes  推移分钟数 把日期往后增加一分钟.整数往后推,负数往前移动
 	 */
 	public static String dateTimeAddOrReduceMinutes(String dateTimeStr, int minutes) {
 		String dateStr = "";

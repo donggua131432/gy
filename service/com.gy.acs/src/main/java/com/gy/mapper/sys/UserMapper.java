@@ -1,17 +1,24 @@
 package com.gy.mapper.sys;
 
-import com.gy.model.sys.User;
+import com.gy.domain.dto.sys.User;
+import com.gy.domain.vo.req.UserQuery;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface UserMapper {
-    int deleteByPrimaryKey(String userId);
+    int deleteUserById(String userId);
 
-    int insert(User record);
+    int insertUser(User user);
 
-    int insertSelective(User record);
+    User selectUserById(@Param("appId") String appId);
 
-    User selectByPrimaryKey(String userId);
+    List<User> selectListUserPage(UserQuery userQuery);
 
-    int updateByPrimaryKeySelective(User record);
+    String selectUserRoles(@Param("userId") String userId);
 
-    int updateByPrimaryKey(User record);
+    int updateUser(User user);
+
+    int reSetPassword(@Param("userId") String userId,@Param("password") String password);
+
 }

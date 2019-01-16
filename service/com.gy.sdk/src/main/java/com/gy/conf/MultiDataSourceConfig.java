@@ -2,10 +2,7 @@ package com.gy.conf;
 
 import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.pool.DruidDataSource;
-import com.gy.datasource.Global;
-import com.gy.datasource.JdbcConfig;
-import com.gy.datasource.SubJdbcConfig;
-import com.gy.datasource.TraceDbFilter;
+import com.gy.datasource.*;
 import com.gy.scan.CustomerScanService;
 import com.gy.spi.GySPIFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -14,10 +11,12 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -28,7 +27,9 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @AutoConfigureAfter(JdbcConfig.class)
@@ -37,6 +38,12 @@ import java.util.List;
 public class MultiDataSourceConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(MultiDataSourceConfig.class);
+
+	@Autowired
+	private JdbcConfig jdbc;
+
+	@Autowired
+	private TraceDbFilter traceDbFilter;
 
 	@Bean(name = "jdbcConfig")
 	public JdbcConfig multiJdbcConfig() {
@@ -48,15 +55,9 @@ public class MultiDataSourceConfig {
 		return new TraceDbFilter();
 	}
 
-	/**
-	 * 
-	 * @param jdbc
-	 * @param traceDbFilter
-	 * @return
-	 * @throws SQLException
-	 */
+
 	@Bean(name = "gyDataSource")
-	public DataSource createDatasourceBean(@Autowired JdbcConfig jdbc, @Autowired TraceDbFilter traceDbFilter) {
+	public DataSource createDatasourceBean() {
 		Global global = jdbc.getGlobal();
 		SubJdbcConfig config = jdbc.getDefaultSubJdbcConfig();
 		DruidDataSource datasource = new DruidDataSource();
@@ -69,15 +70,12 @@ public class MultiDataSourceConfig {
 		datasource.setMaxWait(global.getMaxWait());
 		datasource.setMaxActive(global.getMaxActive());
 		datasource.setMinEvictableIdleTimeMillis(global.getMinEictableIdleTimeMillis());
-
 		//datasource.setKeepAlive(true);
 		//datasource.setLogAbandoned(true);
 		//datasource.setRemoveAbandoned(true);
-
 		List<Filter> filters = new ArrayList<>();
 		filters.add(traceDbFilter);
 		datasource.setProxyFilters(filters);
-
 		try {
 			datasource.setFilters("stat");
 		} catch (SQLException e) {
@@ -86,14 +84,58 @@ public class MultiDataSourceConfig {
 		return datasource;
 	}
 
+	@Bean(name ="dynamicDataSource")
+	@Primary
+	public DataSource dynamicDataSource(@Qualifier("gyDataSource") DataSource defaultDatasource){
+		DynamicDataSource dynamicDataSource = new DynamicDataSource();
+
+		//默认数据源
+		dynamicDataSource.setDefaultTargetDataSource(defaultDatasource);
+
+		//配置多数据源
+		Map<Object,Object> dsMap = new HashMap<>();
+		Global global = jdbc.getGlobal();
+		List<SubJdbcConfig> subJdbcConfigList = jdbc.getJdbcConfigInfos();
+		for (SubJdbcConfig config: subJdbcConfigList) {
+			DruidDataSource datasource = new DruidDataSource();
+			datasource.setUrl(config.getUrl());
+			datasource.setDriverClassName(global.getDriverClassName());
+			datasource.setUsername(global.getUser());
+			datasource.setPassword(global.getPassword());
+			datasource.setInitialSize(global.getPoolSize());
+			datasource.setMinIdle(global.getMinIdle());
+			datasource.setMaxWait(global.getMaxWait());
+			datasource.setMaxActive(global.getMaxActive());
+			datasource.setMinEvictableIdleTimeMillis(global.getMinEictableIdleTimeMillis());
+			//datasource.setKeepAlive(true);
+			//datasource.setLogAbandoned(true);
+			//datasource.setRemoveAbandoned(true);
+			List<Filter> filters = new ArrayList<>();
+			filters.add(traceDbFilter);
+			datasource.setProxyFilters(filters);
+			try {
+				datasource.setFilters("stat");
+			} catch (SQLException e) {
+				logger.error("druid configuration initialization filter : {0}",e);
+			}
+
+			dsMap.put(config.getName(),datasource);
+		}
+		dynamicDataSource.setTargetDataSources(dsMap);
+		return dynamicDataSource;
+	}
+
+
+
+
 	/**
-	 * 
+	 * SqlSessionFactory工厂
 	 * @param datasource
 	 * @return
 	 * @throws Exception
 	 */
-	@Bean(name = "gySqlSessionFactory")
-	public SqlSessionFactory getSqlSessionFactory(@Autowired DataSource datasource) throws Exception {
+	@Bean(name = "sqlSessionFactory")
+	public SqlSessionFactory getSqlSessionFactory(@Qualifier("dynamicDataSource") DataSource datasource) throws Exception {
 		CustomerScanService service = GySPIFactory.getInstance().getExtension(CustomerScanService.class,"GY_CUSTOM_SPI");
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(datasource);
@@ -108,13 +150,14 @@ public class MultiDataSourceConfig {
 		return sqlSessionFactoryBean.getObject();
 	}
 
+
 	@Bean
-	public PlatformTransactionManager txManager(@Autowired DataSource ds) {
-		return new DataSourceTransactionManager(ds);
+	public PlatformTransactionManager txManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
+		return new DataSourceTransactionManager(dataSource);
 	}
 
 	@Bean(name = "sqlSessionTemplate")
-	public SqlSessionTemplate multiSqlSessionTemplate(@Autowired SqlSessionFactory sqlSessionFactory) throws Exception {
+	public SqlSessionTemplate multiSqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory){
 		// 默认数据源
 		SqlSessionTemplate template = new SqlSessionTemplate(sqlSessionFactory);
 		return template;

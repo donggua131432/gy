@@ -264,7 +264,7 @@ public class RedisService {
 					}
 					Object result = op.execute(redis, key);
 					if (result != null) {
-						redis.set(key, JsonUtil.object2String(result));
+						redis.set(key, JsonUtil.objectToString(result));
 						return String.valueOf(result);
 					}
 				}
@@ -728,7 +728,7 @@ public class RedisService {
 				return redis.zadd(key, data);
 			}
 		};
-		return executor.execute("zadd", key, JsonUtil.object2String(data));
+		return executor.execute("zadd", key, JsonUtil.objectToString(data));
 	}
 
 	/**
@@ -843,7 +843,7 @@ public class RedisService {
 	 */
 	public void putObject(String key, Object val) {
 		if (val != null) {
-			set(key, JsonUtil.object2String(val));
+			set(key, JsonUtil.objectToString(val));
 		}
 	}
 
@@ -854,7 +854,7 @@ public class RedisService {
 	 */
 	public void putObject(String key, Object val, int cacheExpire) {
 		if (val != null) {
-			setex(key, JsonUtil.object2String(val), cacheExpire);
+			setex(key, JsonUtil.objectToString(val), cacheExpire);
 		}
 	}
 
@@ -865,7 +865,7 @@ public class RedisService {
 	 */
 	public void putList(String key, List val) {
 		if (val != null) {
-			set(key, JsonUtil.object2String(val));
+			set(key, JsonUtil.objectToString(val));
 		}
 	}
 
@@ -876,7 +876,7 @@ public class RedisService {
 	 */
 	public <T> List<T> getList(String key, Class<T> clz) {
 		String result = get(key);
-		return JsonUtil.str2List(result, clz);
+		return JsonUtil.strToList(result, clz);
 	}
 
 	/**
@@ -887,7 +887,7 @@ public class RedisService {
 	 */
 	public <T> T getObject(String key, Class<T> clz) {
 		String result = get(key);
-		return JsonUtil.str2Object(result, clz);
+		return JsonUtil.strToObject(result, clz);
 	}
 
 	/**
@@ -954,7 +954,7 @@ public class RedisService {
 				return result;
 			}
 		};
-		return executor.execute("hmset", key, JsonUtil.object2String(data));
+		return executor.execute("hmset", key, JsonUtil.objectToString(data));
 	}
 
 	/**
